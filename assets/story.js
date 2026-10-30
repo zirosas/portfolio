@@ -41,6 +41,9 @@
   var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
   var navLinks = Array.prototype.slice.call(document.querySelectorAll('.site-header nav a'));
   var dataScene = document.querySelector('.data-scene');
+  var chartPoints = Array.prototype.slice.call(document.querySelectorAll('.chart-point'));
+  var chartAnnotations = Array.prototype.slice.call(document.querySelectorAll('.chart-annotation'));
+  var chartCrosshair = document.querySelector('.chart-crosshair');
   var artScene = document.querySelector('.art-scene');
   var heroScene = document.querySelector('.hero-scene');
   var contactScene = document.querySelector('.contact-scene');
@@ -66,8 +69,13 @@
     heroScene.style.setProperty('--portrait-shift', (-38 * heroProgress).toFixed(1) + 'px');
     var dataProgress = progress(dataScene);
     dataScene.style.setProperty('--draw', (1 - dataProgress).toFixed(3));
-    dataScene.style.setProperty('--data-opacity', clamp(dataProgress * 2.5).toFixed(3));
-    dataScene.style.setProperty('--annotation-shift', ((1 - dataProgress) * 28).toFixed(1) + 'px');
+    dataScene.style.setProperty('--data-opacity', clamp(dataProgress * 2).toFixed(3));
+    chartPoints.forEach(function (point, index) {
+      var active = dataProgress >= [0, .3, .6, .9][index];
+      point.classList.toggle('is-active', active);
+      chartAnnotations[index].classList.toggle('is-active', active);
+    });
+    chartCrosshair.classList.toggle('is-active', dataProgress >= .9);
     var artProgress = progress(artScene);
     artScene.style.setProperty('--sun-shift', (-75 * artProgress).toFixed(1) + 'px');
     artScene.style.setProperty('--disc-shift', (65 * artProgress).toFixed(1) + 'px');
