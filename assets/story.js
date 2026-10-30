@@ -1,5 +1,15 @@
 (function () {
   var root = document.documentElement;
+  var isJapanese = root.lang === 'ja';
+  var words = isJapanese ? {
+    light: 'ライト', dark: 'ダーク', switchToLight: 'ライトモードに切り替え', switchToDark: 'ダークモードに切り替え',
+    tryInteraction: '動きを試す ↗', resetInteraction: '元に戻す ↺', ready: '準備完了', responding: '反応中',
+    readyMessage: '操作してみてください。', responseMessage: '操作に応じて変わります。'
+  } : {
+    light: 'Light', dark: 'Dark', switchToLight: 'Switch to light theme', switchToDark: 'Switch to dark theme',
+    tryInteraction: 'Try the interaction ↗', resetInteraction: 'Reset interaction ↺', ready: 'READY', responding: 'RESPONDING',
+    readyMessage: 'Ready when you are.', responseMessage: 'Now it responds to you.'
+  };
   var themeButton = document.querySelector('.theme-toggle');
   var themeIcon = themeButton && themeButton.querySelector('.theme-toggle-icon');
   var themeLabel = themeButton && themeButton.querySelector('.theme-toggle-label');
@@ -14,9 +24,9 @@
     if (!themeButton) return;
     var dark = root.getAttribute('data-theme') === 'dark';
     themeButton.setAttribute('aria-pressed', String(dark));
-    themeButton.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    themeButton.setAttribute('aria-label', dark ? words.switchToLight : words.switchToDark);
     themeIcon.textContent = dark ? '☀' : '☾';
-    themeLabel.textContent = dark ? 'Light' : 'Dark';
+    themeLabel.textContent = dark ? words.light : words.dark;
   }
 
   if (themeButton) {
@@ -40,6 +50,8 @@
 
   var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
   var navLinks = Array.prototype.slice.call(document.querySelectorAll('.site-header nav a'));
+  var languageLink = document.querySelector('.language-switch a');
+  var languageBase = languageLink.getAttribute('href');
   var dataScene = document.querySelector('.data-scene');
   var chartPoints = Array.prototype.slice.call(document.querySelectorAll('.chart-point'));
   var chartAnnotations = Array.prototype.slice.call(document.querySelectorAll('.chart-annotation'));
@@ -56,9 +68,9 @@
   previewButton.addEventListener('click', function () {
     var engaged = interfacePreview.classList.toggle('is-engaged');
     previewButton.setAttribute('aria-pressed', String(engaged));
-    previewButton.textContent = engaged ? 'Reset interaction ↺' : 'Try the interaction ↗';
-    interfacePreview.querySelector('.preview-status').textContent = engaged ? 'RESPONDING' : 'READY';
-    interfacePreview.querySelector('.preview-message').textContent = engaged ? 'Now it responds to you.' : 'Ready when you are.';
+    previewButton.textContent = engaged ? words.resetInteraction : words.tryInteraction;
+    interfacePreview.querySelector('.preview-status').textContent = engaged ? words.responding : words.ready;
+    interfacePreview.querySelector('.preview-message').textContent = engaged ? words.responseMessage : words.readyMessage;
   });
 
   function clamp(value) { return Math.max(0, Math.min(1, value)); }
@@ -76,6 +88,7 @@
       if (link.getAttribute('href') === '#' + active.id) link.setAttribute('aria-current', 'true');
       else link.removeAttribute('aria-current');
     });
+    languageLink.setAttribute('href', languageBase + '#' + active.id);
     if (reducedMotion) return;
     var heroProgress = clamp(-heroScene.getBoundingClientRect().top / Math.max(1, heroScene.offsetHeight));
     heroScene.style.setProperty('--portrait-shift', (-38 * heroProgress).toFixed(1) + 'px');
