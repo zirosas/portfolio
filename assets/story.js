@@ -110,8 +110,9 @@
     var phaseIndex = Math.min(3, Math.floor(artProgress * 4));
     processLayers.forEach(function (layer, index) { layer.classList.toggle('is-active', index === phaseIndex); });
     processSteps.forEach(function (step, index) { step.classList.toggle('is-active', index === phaseIndex); });
-    var contactProgress = clamp((window.innerHeight - contactScene.getBoundingClientRect().top) / Math.max(1, window.innerHeight + contactScene.offsetHeight));
-    contactScene.style.setProperty('--orbit-spin', (28 * contactProgress).toFixed(1) + 'deg');
+    var contactProgress = clamp((window.innerHeight * .75 - contactScene.getBoundingClientRect().top) / window.innerHeight);
+    contactScene.style.setProperty('--enso-draw', (1 - contactProgress).toFixed(3));
+    contactScene.style.setProperty('--seal-opacity', clamp((contactProgress - .78) * 5).toFixed(3));
   }
   function requestUpdate() {
     if (pending) return;
