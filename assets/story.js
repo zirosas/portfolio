@@ -45,9 +45,21 @@
   var chartAnnotations = Array.prototype.slice.call(document.querySelectorAll('.chart-annotation'));
   var chartCrosshair = document.querySelector('.chart-crosshair');
   var artScene = document.querySelector('.art-scene');
+  var processLayers = Array.prototype.slice.call(document.querySelectorAll('.process-layer'));
+  var processSteps = Array.prototype.slice.call(document.querySelectorAll('.process-steps li'));
+  var interfacePreview = document.querySelector('.interface-preview');
+  var previewButton = document.querySelector('.preview-button');
   var heroScene = document.querySelector('.hero-scene');
   var contactScene = document.querySelector('.contact-scene');
   var pending = false;
+
+  previewButton.addEventListener('click', function () {
+    var engaged = interfacePreview.classList.toggle('is-engaged');
+    previewButton.setAttribute('aria-pressed', String(engaged));
+    previewButton.textContent = engaged ? 'Reset interaction ↺' : 'Try the interaction ↗';
+    interfacePreview.querySelector('.preview-status').textContent = engaged ? 'RESPONDING' : 'READY';
+    interfacePreview.querySelector('.preview-message').textContent = engaged ? 'Now it responds to you.' : 'Ready when you are.';
+  });
 
   function clamp(value) { return Math.max(0, Math.min(1, value)); }
   function progress(element) {
@@ -82,6 +94,9 @@
     artScene.style.setProperty('--disc-spin', (28 * artProgress).toFixed(1) + 'deg');
     artScene.style.setProperty('--frame-spin', (-8 + 17 * artProgress).toFixed(1) + 'deg');
     artScene.style.setProperty('--wave-shift', (-55 * artProgress).toFixed(1) + 'px');
+    var phaseIndex = Math.min(3, Math.floor(artProgress * 4));
+    processLayers.forEach(function (layer, index) { layer.classList.toggle('is-active', index === phaseIndex); });
+    processSteps.forEach(function (step, index) { step.classList.toggle('is-active', index === phaseIndex); });
     var contactProgress = clamp((window.innerHeight - contactScene.getBoundingClientRect().top) / Math.max(1, window.innerHeight + contactScene.offsetHeight));
     contactScene.style.setProperty('--orbit-spin', (28 * contactProgress).toFixed(1) + 'deg');
   }
